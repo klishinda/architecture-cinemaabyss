@@ -49,7 +49,12 @@ async def proxy_request(request: Request, target_base: str):
         except httpx.RequestError as e:
             raise HTTPException(status_code=502, detail=str(e))
 
-    return Response(content=resp.content, status_code=resp.status_code, headers=dict(resp.headers))
+    filtered_headers = {
+        k: v for k, v in resp.headers.items()
+        if k.lower() not in ("content-length", "transfer-encoding", "connection")
+    }
+
+    return Response(content=resp.content, status_code=resp.status_code, headers=filtered_headers)
 
 @app.api_route("/api/movies", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def movies_entry(request: Request):
@@ -59,6 +64,11 @@ async def movies_entry(request: Request):
 
     route_new = should_route_to_new(user_id)
     target = NEW_MOVIES_URL if route_new else MONOLITH_MOVIES_URL
+    return await proxy_request(request, target)
+
+@app.api_route("/api/users", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def movies_entry(request: Request):
+    target = MONOLITH_MOVIES_URL
     return await proxy_request(request, target)
 
 @app.get("/health")

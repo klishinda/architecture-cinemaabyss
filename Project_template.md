@@ -6,9 +6,7 @@
 
 # Задание 2
 
-[Скриншоты работы Kafka]()
-
-[Скриншоты тестов Postman]()
+[Скриншоты работы Kafka и прохождения тестов](https://github.com/klishinda/architecture-cinemaabyss/blob/1e42ceb0e2df7abcc35ffaeb02737066e72a2d1e/screenshots/kafka)
 
 # Задание 3
 
