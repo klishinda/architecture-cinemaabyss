@@ -64,5 +64,3 @@ async def movies_entry(request: Request):
 @app.get("/health")
 async def health():
     return {"status": "ok", "migration_percent": MIGRATION_PERCENT}
-
-

@@ -83,21 +83,21 @@ services:
       - cinemaabyss-network
 
   # Events Microservice
-  #events-service:
-  #  build:
-  #    context: ./src/microservices/events
-  #    dockerfile: Dockerfile
-  #  container_name: cinemaabyss-events-service
-  #  depends_on:
-  #    - postgres
-  #    - kafka
-  #  ports:
-  #    - "8082:8082"
-  #  environment:
-  #    PORT: 8082
-  #    KAFKA_BROKERS: kafka:9092
-  #  networks:
-  #    - cinemaabyss-network
+  events-service:
+    build:
+      context: ./src/microservices/events
+      dockerfile: Dockerfile
+    container_name: cinemaabyss-events-service
+    depends_on:
+      - postgres
+      - kafka
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: 8082
+      KAFKA_BROKERS: kafka:9092
+    networks:
+      - cinemaabyss-network
 
   # Proxy Service (API Gateway)
   proxy-service:
@@ -122,19 +122,19 @@ services:
       - cinemaabyss-network
 
   # Kafka UI for monitoring Kafka
-  #kafka-ui:
-  #  image: provectuslabs/kafka-ui:latest
-  #  container_name: cinemaabyss-kafka-ui
-  #  depends_on:
-  #    - kafka
-  #  ports:
-  #    - "8090:8080"
-  #  environment:
-  #    KAFKA_CLUSTERS_0_NAME: cinemaabyss
-  #    KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-  #    KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
-  #  networks:
-  #    - cinemaabyss-network
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: cinemaabyss-kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: cinemaabyss
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - cinemaabyss-network
 
 volumes:
   postgres-data:

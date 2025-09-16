@@ -69,7 +69,6 @@ ContainerQueue(rabbitmq_films, "Очередь с загрузкой новых 
 ContainerQueue(rabbitmq_metafilms, "Очередь с инфо о новых фильмах", "RabbitMQ", "Инфо о новом фильме (без видео)")
 
 
-
 Rel(user, web, "Использует интерфейс", "REST")
 Rel(user, mobile, "Использует приложение", "REST")
 Rel(user, tv, "Использует TV", "REST")
@@ -118,6 +117,5 @@ Rel(rabbitmq_metafilms, film, "Добавление метаинформации
 Rel(films_handler, s3, "Сохранение видео", "REST")
 Rel(rabbitmq_metafilms, recommendation, "Оценить, кому рекомендуем", "AMQP")
 Rel(rabbitmq_metafilms, notification, "Отправить сообщение о пополнении каталога", "AMQP")
-
 
 @enduml
