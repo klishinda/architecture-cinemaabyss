@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       labels:
-        app: movies-service
+        app: events-service
     spec:
       containers:
       - name: events-service

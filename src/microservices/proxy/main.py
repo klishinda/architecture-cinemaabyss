@@ -51,7 +51,7 @@ async def proxy_request(request: Request, target_base: str):
 
     filtered_headers = {
         k: v for k, v in resp.headers.items()
-        if k.lower() not in ("content-length", "transfer-encoding", "connection")
+        if k.lower() not in ("content-length", "transfer-encoding", "connection", "date")
     }
 
     return Response(content=resp.content, status_code=resp.status_code, headers=filtered_headers)

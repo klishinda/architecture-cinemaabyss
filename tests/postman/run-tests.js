@@ -92,7 +92,8 @@ const newmanOptions = {
   },
   bail: argv.bail,
   timeoutRequest: argv.timeout,
-  delayRequest: 100 // Small delay between requests
+  delayRequest: 100, // Small delay between requests
+  requestHeaders: { "Host": "cinemaabyss.example.com" }
 };
 
 // Add folder option if specified
