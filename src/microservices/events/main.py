@@ -111,9 +111,11 @@ async def create_user_event(event: UserEvent):
 async def create_payment_event(event: PaymentEvent):
     topic = "payment-events"
     try:
-        new_id = await id_gen.next("payment")
+        if not event.payment_id:
+            event.payment_id = str(await id_gen.next("payment"))
+
         payload = {
-            "id": new_id,
+            "id": event.payment_id,
             "type": "payment",
             "timestamp": event.timestamp.isoformat(),
             "payload": model_to_dict(event),
