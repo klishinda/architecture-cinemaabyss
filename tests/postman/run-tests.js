@@ -106,23 +106,6 @@ console.log(`Running tests against ${argv.environment} environment...`);
 
 const runner = newman.run(newmanOptions);
 
-runner.on('beforeRequest', (err, args) => {
-  if (err) return console.error(err);
-
-  console.log('--- Sending request ---');
-  console.log('URL:', args.request.url.toString());
-  console.log('Headers:');
-  args.request.headers.each(header => {
-    console.log(`  ${header.key}: ${header.value}`);
-  });
-
-  if (args.request.body) {
-    console.log('Body:', args.request.body.raw || args.request.body.toString());
-  }
-
-  console.log('----------------------');
-});
-
 runner.on('done', (err, summary) => {
   if (err) {
     console.error('Error running Newman:', err);

@@ -662,23 +662,17 @@
           },
           "event": [
             {
-              "listen": "prerequest",
+              "listen": "test",
               "script": {
                 "exec": [
-                  "console.log('--- Pre-request log ---');",
-                  "console.log('paymentId =', pm.collectionVariables.get('paymentId'));",
-                  "console.log('userId =', pm.collectionVariables.get('userId'));",
-                  "console.log('isoTimestamp =', pm.variables.replaceIn('{{$isoTimestamp}}'));",
-                  "console.log('Request body to be sent:');",
-                  "console.log(JSON.stringify({",
-                  "  payment_id: pm.collectionVariables.get('paymentId'),",
-                  "  user_id: pm.collectionVariables.get('userId'),",
-                  "  amount: 9.99,",
-                  "  status: 'completed',",
-                  "  timestamp: pm.variables.replaceIn('{{$isoTimestamp}}'),",
-                  "  method_type: 'credit_card'",
-                  "}, null, 2));",
-                  "console.log('---------------------');"
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has status success\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(\"success\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
