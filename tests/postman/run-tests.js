@@ -96,6 +96,11 @@ const newmanOptions = {
   requestHeaders: { "Host": "cinemaabyss.example.com" }
 };
 
+newmanOptions.beforeRequest = (err, args) => {
+  console.log("Request URL:", args.request.url.toString());
+  console.log("Request headers:", args.request.headers.members);
+};
+
 // Add folder option if specified
 if (argv.folder) {
   newmanOptions.folder = argv.folder;
