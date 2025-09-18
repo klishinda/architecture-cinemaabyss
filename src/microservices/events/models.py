@@ -23,7 +23,8 @@ class PaymentEvent(BaseModel):
     user_id: int
     amount: float
     currency: Optional[str] = "USD"
-    status: Optional[str] = "created"
+    status: Optional[str] = "completed"
+    method_type: Optional[str] = None
     timestamp: Optional[datetime] = Field(default_factory=utc_now)
 
 class MovieEvent(BaseModel):

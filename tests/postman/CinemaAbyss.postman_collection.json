@@ -5,16 +5,16 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "event": [
-  {
-    "listen": "prerequest",
-    "script": {
-      "exec": [
-        "pm.request.headers.add({ key: 'Host', value: 'cinemaabyss.example.com' });"
-      ],
-      "type": "text/javascript"
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [
+          "pm.request.headers.add({ key: 'Host', value: 'cinemaabyss.example.com' });"
+        ],
+        "type": "text/javascript"
+      }
     }
-  }
-],
+  ],
   "item": [
     {
       "name": "Monolith Service",

@@ -96,33 +96,41 @@ const newmanOptions = {
   requestHeaders: { "Host": "cinemaabyss.example.com" }
 };
 
-newmanOptions.beforeRequest = (err, args) => {
-  console.log("Request URL:", args.request.url.toString());
-  console.log("Request headers:", args.request.headers.members);
-};
-
 // Add folder option if specified
 if (argv.folder) {
   newmanOptions.folder = argv.folder;
 }
 
-// Run Newman
+// Run Newman with event logging
 console.log(`Running tests against ${argv.environment} environment...`);
-newman.run(newmanOptions, function (err, summary) {
-  if (err) { 
+
+const runner = newman.run(newmanOptions);
+
+runner.on('beforeRequest', (err, args) => {
+  if (err) {
+    console.error('Error in beforeRequest:', err);
+    return;
+  }
+  console.log('--- Sending request ---');
+  console.log('URL:', args.request.url.toString());
+  console.log('Headers:');
+  args.request.headers.each(header => {
+    console.log(`  ${header.key}: ${header.value}`);
+  });
+  console.log('----------------------');
+});
+
+runner.on('done', (err, summary) => {
+  if (err) {
     console.error('Error running Newman:', err);
     process.exit(1);
   }
-  
-  // Log results
+
   console.log('Newman run completed!');
-  
   const failureCount = summary.run.failures.length;
   console.log(`Total requests: ${summary.run.stats.requests.total}`);
   console.log(`Failed requests: ${summary.run.stats.requests.failed}`);
   console.log(`Total assertions: ${summary.run.stats.assertions.total}`);
   console.log(`Failed assertions: ${summary.run.stats.assertions.failed}`);
-  
-  // Exit with appropriate code
   process.exit(failureCount > 0 ? 1 : 0);
 });
