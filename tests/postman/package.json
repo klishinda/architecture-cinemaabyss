@@ -22,7 +22,6 @@
     "yargs": "^17.6.2"
   },
   "devDependencies": {
-    "newman": "^6.21.1",
-    "newman-reporter-htmlextra": "^1.28.0"
+    "newman": "^6.2.1"
   }
 }
