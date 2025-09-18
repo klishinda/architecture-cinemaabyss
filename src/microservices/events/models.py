@@ -19,7 +19,7 @@ class UserEvent(BaseModel):
     timestamp: Optional[datetime] = Field(default_factory=utc_now)
 
 class PaymentEvent(BaseModel):
-    payment_id: Optional[str] = None
+    payment_id: Optional[int] = 1
     user_id: int
     amount: float
     currency: Optional[str] = "USD"
