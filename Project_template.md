@@ -237,6 +237,10 @@ cat .docker/config.json | base64
 
 
 # Задание 4
+
+[Скриншоты результатов Helm](https://github.com/klishinda/architecture-cinemaabyss/blob/bc03e7e9fcc8e7896503dd9ab7bdbae8da6ea391/screenshots/helm)
+
+
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
 
 Для этого:
