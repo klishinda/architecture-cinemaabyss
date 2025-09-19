@@ -10,6 +10,17 @@
 
 # Задание 3
 
+[Скриншоты работы k8s](https://github.com/klishinda/architecture-cinemaabyss/blob/0be746a6b467182d12afb394011e06af8a807cfa/screenshots/kuber)
+
+Пометки для себя на будущее:
+
+- шаг 0 - minikube start
+- docker build -t events-service:latest . - из папки с Dockerfile, билд изменений
+- kubectl -n cinemaabyss rollout restart deployment/events-service - доставка изменений в кубер
+- kubectl -n cinemaabyss get pods -o wide - просмотр состояния подов и их названий
+
+
+
 Команда начала переезд в Kubernetes для лучшего масштабирования и повышения надежности. 
 Вам, как архитектору осталось самое сложное:
  - реализовать CI/CD для сборки прокси сервиса
