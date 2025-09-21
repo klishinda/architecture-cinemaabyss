@@ -1,0 +1,121 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title "C4 диаграмма контейнеров стартапа Кинобездна"
+
+Person(user, "Пользователь", "Мобильные, ноутбуки, smart TV")
+System_Ext(ps, "Платёжная система", "НСПК")
+System_Ext(rs, "Рекомендательная система")
+System_Ext(cinemas, "Онлайн кинотеатры")
+
+System_Boundary(sb1, "Контекст интерфейсов") {
+  Container(tv, "Smart TV", "TV API", "Просмотр по TV")
+  Container(web, "Web интерфейс (ноуты, PC)", "React", "Просмотр через web")
+  Container(mobile, "Mobile интерфейс", "iOS/Android", "Просмотр через мобильные устройства")
+}
+
+System_Boundary(sb2, "Контекст подписок") {
+  Container(subscriptions, "Сервис управления подписками", "Go", "Тарифы, подписки и их опции")
+  ContainerDb(subscriptions_db, "БД для информации по подпискам", "Postgresql", "Пользовательские подписки и опции")
+}
+
+System_Boundary(sb4, "Пользовательские настройки") {
+  Container(user_management, "Управление учёткой пользователя", "Go", "Личный кабинет, создание/изменение/удаление учётки, создание семей и т.д.")
+  ContainerDb(user_db, "БД с инфой по пользователю", "Postgresql", "Инфо по пользователю")
+}
+
+System_Boundary(sb5, "Фильмы") {
+  Container(film, "Сервис фильмов", "Go", "Добавление/Изменение/Удаление фильмов и информации по ним (в т.ч. рейтинги)")
+  ContainerDb(film_db, "БД с инфой по фильмам", "Postgresql", "Общая метаинформация по фильмам")
+  Container(film_user_management, "Взаимодействие пользователя с фильмами", "Go", "Лайки, оценки, формирование избранного, просмотр инфо")
+  ContainerDb(film_statistics_db, "БД статистики по фильмам", "Postgresql", "Статистика по фильмам в разрезе пользователя - что просмотрено, процент просмотра и т.д.")
+}
+
+System_Boundary(sb6, "Авторизация и проверка доступов") {
+  Container(authorization, "Авторизация", "Go", "Авторизация пользователей")
+  ContainerDb(authorization_db, "Защищенная БД с паролями и доступами пользователей", "Postgresql", "Авторизация пользователей")
+}
+
+System_Boundary(sb7, "Нотификация пользователей") {
+  Container(notification, "Сервис отправки нотификаций", "Go", "Логика отправки оповещений по разным каналам")
+  ContainerDb(notification_db, "БД оповещений", "Postgresql", "История отправленных оповещений")
+}
+
+System_Boundary(sb8, "Оплата") {
+  Container(payment, "Сервис оплаты", "Go", "Обработка платежей")
+  ContainerDb(payment_db, "БД для оплат и реквизитов клиентов", "Postgresql", "История оплат, маскированная платежная информация клиентов")
+}
+
+System_Boundary(sb9, "Отзывы") {
+  Container(review, "Управление отзывами", "Go", "Управление отзывами")
+  ContainerDb(review_db, "БД с комментариями и рецензиями", "Postgresql", "Рецензии пользователей")
+}
+
+System_Boundary(sb10, "Работа с видео") {
+  Container(films_handler, "Обработка новых фильмов", "Go", "Обработка сырого потока, декодирование и т.д.")
+  Container(s3, "S3", "CDN", "Сохраненное видео")
+}
+
+System_Boundary(sb11, "Работа с рекомендациями") {
+  Container(recommendation, "Взаимодействие с рекомендациями", "Go", "Взаимодействие с рекомендациями")
+  ContainerDb(recommendation_db, "БД с рекомендациями", "Postgresql", "Сохранение рекомендаций от внешней системы")
+}
+
+Container(api_gate, "API Gateway", "Kong", "Основной маршрутизатор запросов")
+ContainerDb(cache, "Кэширование", "Redis", "Кэширование сессий, Последний просмотренный фильм на запуске, Последние N просмотренных фильмов на стартовом экране и т.д.")
+ContainerQueue(rabbitmq_rs, "Обмен с рекомендательной системой", "RabbitMQ", "Интеграция со сторонней системой")
+ContainerQueue(rabbitmq_comment, "Очередь с новыми отзывами", "RabbitMQ", "События с новыми отзывами")
+ContainerQueue(rabbitmq_films, "Очередь с загрузкой новых видео", "RabbitMQ", "Очередь с загрузкой новых видео")
+ContainerQueue(rabbitmq_metafilms, "Очередь с инфо о новых фильмах", "RabbitMQ", "Инфо о новом фильме (без видео)")
+
+
+Rel(user, web, "Использует интерфейс", "REST")
+Rel(user, mobile, "Использует приложение", "REST")
+Rel(user, tv, "Использует TV", "REST")
+
+Rel(web, api_gate, "Запрос", "REST")
+Rel(mobile, api_gate, "Запрос", "REST")
+Rel(tv, api_gate, "Запрос", "REST")
+
+Rel(api_gate, cache, "Кэширование", "Redis")
+
+Rel(api_gate, payment, "Управление оплатой", "REST")
+Rel(payment, payment_db, "Получение данных", "SQL")
+Rel(payment, ps, "Оплата", "REST")
+
+Rel(api_gate, subscriptions, "Подписки, тарифы, оплата", "REST")
+Rel(subscriptions, subscriptions_db, "Сохранение данных", "SQL")
+
+Rel(api_gate, authorization, "Аутентификация", "REST")
+Rel(authorization, authorization_db, "Валидация, проверка прав", "SQL")
+
+Rel(api_gate, user_management, "Аккаунт", "REST")
+Rel(user_management, user_db, "Получение данных", "SQL")
+
+Rel(film, film_db, "Получение данных", "SQL")
+Rel(film, review, "Подтягивание комментов", "REST")
+
+Rel(review, review_db, "Получение данных", "SQL")
+Rel(review, rabbitmq_comment, "Получение данных", "AMQP")
+
+Rel(recommendation, recommendation_db, "Получение данных", "SQL")
+
+Rel(notification, notification_db, "Получение данных", "SQL")
+Rel(rabbitmq_comment, notification, "Отправка оповещений", "AMQP")
+
+Rel(api_gate, film_user_management, "Взаимодействие с фильмами", "REST")
+Rel(film, film_user_management, "Взаимодействие с фильмами", "REST")
+Rel(film_user_management, film_statistics_db, "Получение данных", "SQL")
+
+Rel(rabbitmq_rs, rs, "Передача/запрос рекомендаций", "AMQP")
+Rel(recommendation, rabbitmq_rs, "Интересы пользователя", "AMQP")
+
+Rel(cinemas, rabbitmq_films, "Пополнение коллекции фильмов", "AMQP")
+Rel(rabbitmq_films, films_handler, "Получение новых видео", "AMQP")
+Rel(films_handler, rabbitmq_metafilms, "Обработанная метаинформация по фильмам", "AMQP")
+Rel(rabbitmq_metafilms, film, "Добавление метаинформации", "AMQP")
+Rel(films_handler, s3, "Сохранение видео", "REST")
+Rel(rabbitmq_metafilms, recommendation, "Оценить, кому рекомендуем", "AMQP")
+Rel(rabbitmq_metafilms, notification, "Отправить сообщение о пополнении каталога", "AMQP")
+
+@enduml

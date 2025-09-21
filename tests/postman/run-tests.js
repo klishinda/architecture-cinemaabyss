@@ -92,7 +92,8 @@ const newmanOptions = {
   },
   bail: argv.bail,
   timeoutRequest: argv.timeout,
-  delayRequest: 100 // Small delay between requests
+  delayRequest: 100, // Small delay between requests
+  requestHeaders: { "Host": "cinemaabyss.example.com" }
 };
 
 // Add folder option if specified
@@ -100,23 +101,22 @@ if (argv.folder) {
   newmanOptions.folder = argv.folder;
 }
 
-// Run Newman
+// Run Newman with event logging
 console.log(`Running tests against ${argv.environment} environment...`);
-newman.run(newmanOptions, function (err, summary) {
-  if (err) { 
+
+const runner = newman.run(newmanOptions);
+
+runner.on('done', (err, summary) => {
+  if (err) {
     console.error('Error running Newman:', err);
     process.exit(1);
   }
-  
-  // Log results
+
   console.log('Newman run completed!');
-  
   const failureCount = summary.run.failures.length;
   console.log(`Total requests: ${summary.run.stats.requests.total}`);
   console.log(`Failed requests: ${summary.run.stats.requests.failed}`);
   console.log(`Total assertions: ${summary.run.stats.assertions.total}`);
   console.log(`Failed assertions: ${summary.run.stats.assertions.failed}`);
-  
-  // Exit with appropriate code
   process.exit(failureCount > 0 ? 1 : 0);
 });
